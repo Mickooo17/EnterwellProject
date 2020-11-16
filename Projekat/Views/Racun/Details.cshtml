@@ -1,0 +1,123 @@
+﻿@model Projekat.Models.DTOs.RacunStavkaDto
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+
+<div class="form-horizontal">
+    <h4>Racun</h4>
+    <hr />
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.BrojFakture, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.Racun.BrojFakture
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.CreateDate, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.Racun.CreateDate.Value.ToShortDateString()
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.DatumDospjecaFakture, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.Racun.DatumDospjecaFakture.Value.ToShortDateString()
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.PrimateljRacuna, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.Racun.PrimateljRacuna
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.StvarateljRacuna, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.Racun.StvarateljRacuna.Email
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Racun.PDV, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @(Model.Racun.PDV * 100)%
+        </div>
+    </div>
+
+    <br />
+</div>
+
+<div>
+    <h4>Stavke računa</h4>
+    <table class="table">
+        <thead>
+
+            <tr>
+                <th>
+                    Opis
+                </th>
+                <th>
+                    Kolicina
+                </th>
+                <th>
+                    Cijena bez PDV
+                </th>
+                <th>
+                    Ukupna cijena bez PDV
+                </th>
+                <th>
+                    Ukupna cijena sa PDV
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+            @foreach (var item in Model.Stavke)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayTextFor(model => item.Opis)
+                    </td>
+                    <td>
+                        @Html.DisplayTextFor(model => item.Kolicina)
+                    </td>
+                    <td>
+                        @item.CijenaBezPDV.ToString("C")
+                    </td>
+                    <td>
+                        @((item.CijenaBezPDV * item.Kolicina).ToString("C"))
+                    </td>
+                    <td>
+                        @((item.CijenaSaPDV * item.Kolicina).ToString("C"))
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td><strong>@Model.UkupnaCijenaBezPDVa.ToString("C")</strong></td>
+
+                <td><strong>@Model.UkupnaCijenaSaPDVom.ToString("C")</strong></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

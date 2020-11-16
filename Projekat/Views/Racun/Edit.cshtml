@@ -1,0 +1,147 @@
+﻿@model Projekat.Models.Racun
+@using Projekat.Helper
+
+@{
+    ViewBag.Title = "Edit";
+    object PricePattern = ViewBag.PricePattern;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="form-horizontal">
+    <h4>Racun</h4>
+    <hr />
+    <div class="form-group">
+        @Html.LabelFor(model => model.BrojFakture, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.BrojFakture
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.CreateDate.Value.ToShortDateString()
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DatumDospjecaFakture, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.DatumDospjecaFakture.Value.ToShortDateString()
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PrimateljRacuna, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.PrimateljRacuna
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StvarateljRacuna, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @Model.StvarateljRacuna.Email
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PDV, htmlAttributes: new { @class = "control-label col-md-2 no-padding" })
+        <div class="col-md-10">
+            @(Model.PDV * 100)%
+        </div>
+    </div>
+</div>
+
+<br />
+
+@using (Html.BeginForm("DodajStavku", "Racun"))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="RacunId" value="@Model.Id" />
+    <div>
+        <h4>Stavke računa</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Opis
+                    </th>
+                    <th>
+                        Kolicina
+                    </th>
+                    <th>
+                        Cijena bez PDV
+                    </th>
+                    <th>
+                        Ukupna cijena bez PDV-a
+                    </th>
+                    <th>
+                        Ukupna cijena sa PDV-om
+                    </th>
+                    <th>Akcija</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.RacunStavke)
+                {
+                    <tr class="stavka-row" data-stavka-id="@item.Id">
+                        <td class="opis" data-value="@item.Opis">
+                            @Html.DisplayTextFor(model => item.Opis)
+                        </td>
+                        <td class="kolicina" data-value="@item.Kolicina">
+                            @Html.DisplayTextFor(model => item.Kolicina)
+                        </td>
+                        <td class="cijenabezpdv" data-value="@item.CijenaBezPDV">
+                            @item.CijenaBezPDV.ToString("C")
+                        </td>
+                        <td>
+                            @((item.CijenaBezPDV * item.Kolicina).ToString("C"))
+                        </td>
+                        <td>
+                            @((item.CijenaSaPDV * item.Kolicina).ToString("C"))
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary izmijeni-stavku">Izmijeni</button>
+                            @Html.ActionLink("Ukloni", "UkloniStavku", new { @Id = item.Id }, new { @class = "btn btn-danger" } )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        @Html.TextBox("Opis", null, new { @class = "form-control", @placeholder = "Opis", @required = true })
+                    </td>
+                    <td>
+                        @Html.TextBox("Kolicina", null, new { @class = "form-control", type = "number", min = 1, max = 1000, step = 1, @placeholder = "Kolicina", @required = true })
+                    </td>
+                    <td>
+                        @Html.TextBox("CijenaBezPDV", null, new { @class = "form-control", type = "text", @placeholder = "Cijena bez PDV-a", pattern = PricePattern, @required = true })
+                    </td>
+                    <td>
+                        <input type="hidden" name="Id" id="Id" value="0" />
+                        <button type="submit" class="btn btn-primary" id="StavkaButton">Dodaj</button>
+                        <button type="button" class="btn btn-danger hidden" id="OtkaziButton">Otkaži</button>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+@section Scripts{
+    <script src="~/Scripts/edit-stavka.js"></script>
+}
