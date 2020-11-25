@@ -3,6 +3,7 @@
 
 @{
     ViewBag.Title = "Create";
+    List<SelectListItem> VATList = ViewBag.VATList;
 }
 
 <h2>@ViewBag.Title</h2>
@@ -50,7 +51,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.PDV, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(x => x.PDV, PDVHelper.getPDVLista(), new { @class = "form-control" })
+                @Html.DropDownListFor(x => x.PDV, VATList, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.PDV, "", new { @class = "text-danger" })
             </div>
         </div>

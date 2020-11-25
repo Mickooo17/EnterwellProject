@@ -9,6 +9,10 @@ using Microsoft.AspNet.Identity;
 using Projekat.Models.DTOs;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.ComponentModel.Composition;
+using Projekat.VATContainer;
+using Microsoft.Ajax.Utilities;
+using Projekat.Container;
 
 namespace Projekat.Controllers
 {
@@ -16,6 +20,10 @@ namespace Projekat.Controllers
     public class RacunController : Controller
     {
         ApplicationDbContext Context = new ApplicationDbContext();
+
+        [ImportMany]
+        public IEnumerable<Lazy<IVATRate, IVATRateMetaData>> MEFVATList { get; private set; }
+
         // GET: Racun
         public ActionResult Index()
         {
@@ -55,6 +63,15 @@ namespace Projekat.Controllers
                 BrojFakture = GetIduciBrojFakture(),
                 DatumDospjecaFakture = null
             };
+
+            ViewBag.VATList = MEFVATList
+                .Select(x => x.Value)
+                .DistinctBy(x => x.GetCountryName())
+                .Select(x => new SelectListItem
+            {
+                Text = x.GetCountryName() + " (" + x.GetVATRate() + "%)",
+                Value = ((float)x.GetVATRate() / 100).ToString()
+            }).Distinct().ToList();
 
             return View(racun);
         }
